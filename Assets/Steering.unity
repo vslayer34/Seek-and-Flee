@@ -130,6 +130,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 727603736, guid: 35d11d1e1dd397942b5024ee78060e27, type: 3}
+      propertyPath: dataTracker
+      value: 
+      objectReference: {fileID: 11400000, guid: 0f00ced61dc6cb643b6284fa638e3fa4, type: 2}
     - target: {fileID: 6631964419132099031, guid: 35d11d1e1dd397942b5024ee78060e27, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -260,6 +264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cop: {fileID: 73510360}
+  dataTracker: {fileID: 11400000, guid: 0f00ced61dc6cb643b6284fa638e3fa4, type: 2}
 --- !u!195 &396088621
 NavMeshAgent:
   m_ObjectHideFlags: 0
