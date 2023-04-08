@@ -14,6 +14,8 @@ public class Bot : MonoBehaviour
     [SerializeField]
     DataManagerBlueprint dataTracker;
 
+    Vector3 wanderTarget = Vector3.zero;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,7 +26,8 @@ public class Bot : MonoBehaviour
     void Update()
     {
         //Pursue(cop);
-        Evade(cop);
+        //Evade(cop);
+        Wander();
     }
 
     void Seek(Vector3 target)
@@ -84,5 +87,34 @@ public class Bot : MonoBehaviour
             return;
         }
         Flee(target.position + target.transform.forward * lookAhead);
+    }
+
+    void Wander()
+    {
+        // creating the circle that the destination would be on
+        float wanderRadius = 10.0f;
+        // distance from the Bot
+        float wanderDistance = 20.0f;
+        // jitter along the circle circumforance
+        float wanderJitter = 1.5f;
+
+        // adjusting the wander target as the game plays
+        wanderTarget += new Vector3(
+            Random.Range(-1.0f, 1.0f) * wanderJitter,
+            0.0f,
+            Random.Range(-1.0f, 1.0f) * wanderJitter);
+
+        // normarilze the vector so we can multiply with the radiuse
+        // to keep it in the circle circumforance
+        wanderTarget.Normalize();
+        wanderTarget *= wanderRadius;
+
+        // apply the distance offset to the wander target in the radiuse
+        Vector3 targetLocal = wanderTarget + new Vector3(0.0f, 0.0f, wanderDistance);
+        // convert the position to a world position the the bot can seek it
+        Vector3 targetWorld = gameObject.transform.InverseTransformVector(targetLocal);
+
+        // finally seek the newly created position
+        Seek(targetWorld);
     }
 }
