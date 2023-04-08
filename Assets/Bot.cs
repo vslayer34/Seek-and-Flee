@@ -27,7 +27,9 @@ public class Bot : MonoBehaviour
     {
         //Pursue(cop);
         //Evade(cop);
-        Wander();
+        //Wander();
+        //Hide();
+        HideV2();
     }
 
     void Seek(Vector3 target)
@@ -116,5 +118,72 @@ public class Bot : MonoBehaviour
 
         // finally seek the newly created position
         Seek(targetWorld);
+    }
+
+
+    void Hide()
+    {
+        float distance = Mathf.Infinity;
+        Vector3 chosenSpot = Vector3.zero;
+        float hidingDistance = 3.0f;
+
+        foreach (GameObject hidingSpot in World.Instance.HidingSpots)
+        {
+            // a vector from the cop to the tree
+            Vector3 hidingDirection = hidingSpot.transform.position - cop.position;
+            // set offset to the hiding vector so the robber can hide behind the tree
+            Vector3 hidingPosition = hidingSpot.transform.position + hidingDirection.normalized * hidingDistance;
+
+            // choose the closest hiding spot
+            if (Vector3.Distance(transform.position, hidingPosition) < distance)
+            {
+                chosenSpot = hidingPosition;
+                distance = Vector3.Distance(transform.position, hidingPosition);
+            }
+        }
+
+        Seek(chosenSpot);
+    }
+
+
+    void HideV2()
+    {
+        float distance = Mathf.Infinity;
+        Vector3 chosenSpot = Vector3.zero;
+        Vector3 ChosenDirection = Vector3.zero;
+        GameObject chosenHidingSpot = World.Instance.HidingSpots[0];
+        float rayProjectionStart = 10.0f;
+
+        foreach (GameObject hidingSpot in World.Instance.HidingSpots)
+        {
+            // a vector from the cop to the tree
+            Vector3 hidingDirection = hidingSpot.transform.position - cop.position;
+            // set offset to the hiding vector so the robber can hide behind the tree
+            Vector3 hidingPosition = hidingSpot.transform.position + hidingDirection.normalized * rayProjectionStart;
+
+            // choose the closest hiding spot
+            if (Vector3.Distance(transform.position, hidingPosition) < distance)
+            {
+                chosenSpot = hidingPosition;
+                // get the direction of which the raycast would start
+                ChosenDirection = hidingDirection;
+                // get the gameobject that we want to calculate its collider
+                chosenHidingSpot = hidingSpot;
+                distance = Vector3.Distance(transform.position, hidingPosition);
+            }
+        }
+
+        // get reference to collider
+        Collider hidingSpotCollider = chosenHidingSpot.GetComponent<Collider>();
+        // launch a ray from the back of the cover
+        // to hid the back of the cover collider and get the hiding spot from that point
+        Ray backRay = new Ray(chosenSpot, -ChosenDirection.normalized);
+        RaycastHit hit;
+        float rayDistance = 100.0f;
+        hidingSpotCollider.Raycast(backRay, out hit, rayDistance);
+
+        // seek the position of the cover + a relive space
+        float reliveDistance = 3.0f;
+        Seek(hit.point + ChosenDirection.normalized * reliveDistance);
     }
 }
