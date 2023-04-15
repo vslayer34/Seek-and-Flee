@@ -29,7 +29,8 @@ public class Bot : MonoBehaviour
         //Evade(cop);
         //Wander();
         //Hide();
-        HideV2();
+        if (CanSeeTarget())
+            HideV2();
     }
 
     void Seek(Vector3 target)
@@ -185,5 +186,23 @@ public class Bot : MonoBehaviour
         // seek the position of the cover + a relive space
         float reliveDistance = 3.0f;
         Seek(hit.point + ChosenDirection.normalized * reliveDistance);
+    }
+
+
+    bool CanSeeTarget()
+    {
+        Vector3 rayToTarget = cop.position - transform.position;
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, rayToTarget, out hit))
+        {
+            if (hit.collider.CompareTag("Cop"))
+            {
+                Debug.Log("The cop found me!!!!!!");
+                return true;
+            }
+        }
+
+        return false;
     }
 }
